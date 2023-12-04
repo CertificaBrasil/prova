@@ -1,111 +1,907 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
+
 <head>
-    <meta charset="UTF-8">
+    <title>Validar Certificado</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ficha de Inscrição</title>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="https://i.imgur.com/qxZsS1Y.png">
     <style>
+        /* Estilo CSS para a página */
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
             margin: 0;
             padding: 0;
+            font-size: 16px;
+            font-family: 'Open Sans', sans-serif;
         }
-        .container {
-            max-width: 300px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #333;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input[type="text"],
-        input[type="tel"] {
-            width: 80%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            required: true;
-            text-align: center;
-        }
-        input[type="submit"] {
-            background-color: #007bff;
-            color: #fff;
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+            display: flex;
+            align-items: center;
         }
-        input[type="submit"]:hover {
-            background-color: #0056b3;
+
+        .logo {
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .largura-entrada {
+            width: 150px;
+            margin-right: 10px;
+        }
+
+        .botao-verificar {
+            display: inline-block;
+        }
+
+        .autentico {
+            color: green;
+        }
+
+        .invalido {
+            color: red;
+        }
+
+        .resultado-preto {
+            color: black;
+        }
+
+        .content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 50px;
+        }
+
+        .logo-image {
+            max-width: 350px;
         }
     </style>
 </head>
+
 <body>
-    <div class="container">
-        <h1>Ficha de Inscrição</h1>
-        <form id="formInscricao">
-            <label for="nome_completo">Nome Completo:</label>
-            <input type="text" id="nome_completo" name="nome_completo" required>
+    <nav>
+        <img src="https://i.imgur.com/Pm43LXh.png" alt="Logo" class="logo">
+        <div style="flex-grow: 1;"></div>
+        <img src="https://i.imgur.com/8Q5YXbJ.png" alt="Logo" class="logo">
+    </nav>
 
-            <label for="cpf">CPF:</label>
-            <input type="text" id="cpf" name="cpf" required placeholder="000.000.000-00">
-
-            <label for="telefone">Telefone:</label>
-            <input type="tel" id="telefone" name="telefone" required placeholder="(00) 00000-0000">
-
-            <label for="cidade">Cidade:</label>
-            <input type="text" id="cidade" name="cidade" required>
-
-            <label for="estado">Estado:</label>
-            <input type="text" id="estado" name="estado" required>
-
-            <label for="curso">Curso:</label>
-            <input type="text" id="curso" name="curso" required>
-
-            <label for="data_conclusao_curso">Data de Conclusão do Curso:</label>
-            <input type="text" id="data_conclusao_curso" name="data_conclusao_curso" required placeholder="DD/MM/AAAA">
-
-            <input type="submit" value="Enviar">
-        </form>
+    <div class="content">
+        <h1>Consulta Pública de Certificados</h1>
+        <p>Insira o código para consultar o certificado:</p>
+        <div>
+            <input type="text" id="codigoCertificado" class="largura-entrada" />
+            <button class="botao-verificar" onclick="verificarAutenticidade()">Verificar</button>
+        </div>
+        <div id="resultado"></div>
     </div>
-
     <script>
-        document.getElementById("formInscricao").addEventListener("submit", function(event) {
-            event.preventDefault(); // Evita o envio padrão do formulário
+        var certificados = {
+            '0963302155': {
+                nome: 'Fernando Pereira de Sousa',
+                cpf: '014.142.111-80',
+                curso: 'Técnico em Agropecuária',
+                cargaHoraria: '1.200 horas',
+                instituicao: 'Campus Gurupi — IF',
+                local: 'Gurupi - TO',
+                dataConclusao: '24/12/2018'
+            },
+            '0086501463': {
+                nome: 'Antonio Silva Nunes',
+                cpf: '839.753.904-25',
+                curso: 'ENCCEJA - ENSINO MÉDIO',
+                cargaHoraria: 'N/C',
+                instituicao: 'IFMG Ibirité',
+                local: 'Ibirité - MG',
+                dataConclusao: '21/12/2021'
+            },
+            '0013900138': {
+                nome: 'JOÃO JOSÉ DA SILVA',
+                cpf: '123.456.789-10',
+                curso: 'TÉCNICO EM ELETROTÉCNICA',
+                cargaHoraria: '1.200 horas',
+                instituicao: 'INSTITUTO FEDERAL',
+                local: 'PORTO ALEGRE - RS',
+                dataConclusao: '25/09/2023'
+            },
+            '0799981410': {
+                nome: 'JOÃO JOSÉ DA SILVA',
+                cpf: '123.456.789-10',
+                curso: 'ENCCEJA - ENSINO MÉDIO',
+                cargaHoraria: '',
+                instituicao: 'INSTITUTO FEDERAL',
+                local: 'PORTO ALEGRE - RS',
+                dataConclusao: '25/09/2023'
+            },
+            '0088796698': {
+                nome: 'JOÃO JOSÉ DA SILVA',
+                cpf: '123.456.789-10',
+                curso: 'MOPP',
+                cargaHoraria: '50 horas',
+                instituicao: 'SEST SENAT',
+                local: 'PORTO ALEGRE - RS',
+                dataConclusao: '25/09/2023'
+            },
+            '0567789456': {
+                nome: 'JOÃO JOSÉ DA SILVA',
+                cpf: '123.456.789-10',
+                curso: 'OPERADOR DE MAQUINAS PESADAS',
+                cargaHoraria: '80 horas',
+                instituicao: 'SENAI',
+                local: 'PORTO ALEGRE - RS',
+                dataConclusao: '21/07/2023'
+            },
+            '0653007110': {
+                nome: 'JOÃO JOSÉ DA SILVA',
+                cpf: '123.456.789-10',
+                curso: 'ENGENHARIA CIVIL',
+                cargaHoraria: '3200 HORAS',
+                instituicao: 'CRUZEIRO DO SUL',
+                local: 'SÃO PAULO - SP',
+                dataConclusao: '03/03/2019'
+            },
+            '0601097110': {
+                nome: 'TIAGO DA SILVA BRANDÃO',
+                cpf: '052.638.771-88',
+                curso: 'ENGENHARIA CIVIL',
+                cargaHoraria: '3200 HORAS',
+                instituicao: 'CRUZEIRO DO SUL',
+                local: 'BRASILIA - DF',
+                dataConclusao: '03/03/2021'
+            },
+            '0774881010': {
+                nome: 'CLEDEMAR DE ASSUMPÇÃO',
+                cpf: '959.696.919-68',
+                curso: 'ENCCEJA - ENSINO MÉDIO',
+                cargaHoraria: 'N/C',
+                instituicao: 'INSTITUTO FEDERAL',
+                local: 'Curitiba - PR',
+                dataConclusao: '18/12/2022'
+            },
+            '0774101010': {
+                nome: 'ADEILDO DA SILVA GOMES',
+                cpf: '070.125.304-56',
+                curso: 'ENCCEJA - ENSINO MÉDIO',
+                cargaHoraria: 'N/C',
+                instituicao: 'INSTITUTO FEDERAL',
+                local: 'João Pessoa - PB',
+                dataConclusao: '18/12/2012'
+            },
+            '0454411960': {
+                nome: 'IONAS PEREIRA DOS SANTOS',
+                cpf: '221.565.018-40',
+                curso: 'ENCCEJA - ENSINO MÉDIO',
+                cargaHoraria: 'N/C',
+                instituicao: 'INSTITUTO FEDERAL',
+                local: 'SOROCABA - SP',
+                dataConclusao: '18/12/2013'
+            },
+            '0996521142': {
+                nome: 'Anderson Gaioso Souza',
+                cpf: '987.654.321-00',
+                curso: 'Técnico em Segurança do Trabalho',
+                cargaHoraria: '1.200 horas',
+                instituicao: 'SENAI',
+                local: 'Uberlândia - MG',
+                dataConclusao: '30/06/2022'
+            },
+            '0954417777': {
+                nome: 'Geraldo Alves da Silva',
+                cpf: '409.572.684-91',
+                curso: 'Técnico em Segurança do Trabalho',
+                cargaHoraria: '1.200 horas',
+                instituicao: 'INSTITUTO FEDERAL',
+                local: 'Ipatinga – MG,',
+                dataConclusao: '28/09/2023'
+            },
+            '0741074892': {
+                nome: 'ALAN DAVID DE OLIVEIRA',
+                cpf: '032.439.831-00',
+                curso: 'TÉCNICO EM EDIFICAÇÕES',
+                cargaHoraria: '1.200 horas',
+                instituicao: 'SENAI',
+                local: 'CASCAVEL - PR',
+                dataConclusao: '30/10/2018'
+            },
+            '0956530020': {
+                nome: 'Everaldo Peixoto da Silva',
+                cpf: '007.907.301-89',
+                curso: 'MOPP',
+                cargaHoraria: '50 horas',
+                instituicao: 'SEST SENAT',
+                local: 'Anápolis - GO',
+                dataConclusao: '30/06/2022'
+            },
+            '0985104747': {
+                nome: 'Alex da Silva Souza',
+                cpf: '158.247.004-94',
+                curso: 'ENSINO MÉDIO - ENCCEJA',
+                cargaHoraria: '',
+                instituicao: 'INSTITUTO FEDERAL',
+                local: 'PORTO VELHO - RO',
+                dataConclusao: '18/12/2019'
+            },
+            '0998534440': {
+                nome: 'Renato Rangel de Oliveira',
+                cpf: '120.973.357-99',
+                curso: 'ENSINO MÉDIO - ENCCEJA',
+                cargaHoraria: '',
+                instituicao: 'INSTITUTO FEDERAL',
+                local: 'Rio de Janeiro - RJ',
+                dataConclusao: '19/09/2018'
+            },
+            '0910404440': {
+                nome: 'LUCAS DOS SANTOS GUERRA DE LIMA',
+                cpf: '143.112.967-46',
+                curso: 'ENSINO MÉDIO - ENCCEJA',
+                cargaHoraria: '',
+                instituicao: 'INSTITUTO FEDERAL',
+                local: 'Rio de Janeiro - RJ',
+                dataConclusao: '19/09/2019'
+            },
+            '0777881332': {
+                nome: 'Alex da Silva Souza',
+                cpf: '158.247.004-94',
+                curso: 'TÉCNICO EM ELETROTÉCNICA',
+                cargaHoraria: '1300 horas',
+                instituicao: 'SENAI',
+                local: 'PORTO VELHO - RO',
+                dataConclusao: '11/02/2022'
+            },
+            '0101497844': {
+                nome: 'Fernando de Souza Santos',
+                cpf: '068.151.803-01',
+                curso: 'MECÂNICO MONTADOR',
+                cargaHoraria: '1600 horas',
+                instituicao: 'SENAI',
+                local: 'PICOS - PI',
+                dataConclusao: '04/08/2020'
+            },
+            '0967471007': {
+                nome: 'Nayane Maria de Araújo Dias',
+                cpf: '881.787.142-72',
+                curso: 'Técnico em Estética',
+                cargaHoraria: '1200 horas',
+                instituicao: 'SENAC',
+                local: 'PORTO VELHO - RO',
+                dataConclusao: '22/12/2022'
+            },
+            '0777408850': {
+                nome: 'Nayane Maria de Araújo Dias',
+                cpf: '881.787.142-72',
+                curso: 'Técnica em Gastronomia',
+                cargaHoraria: '1200 horas',
+                instituicao: 'SENAC',
+                local: 'PORTO VELHO - RO',
+                dataConclusao: '17/12/2019'
+           },
+            '0153096200': {
+                nome: 'WAGNER DE SOUZA PAJEU',
+                cpf: '090.726.124-85',
+                curso: 'TRANSPORTE ESCOLAR',
+                cargaHoraria: '50 horas',
+                instituicao: 'SEST SENAT',
+                local: 'PETROLINA - PE',
+                dataConclusao: '08/09/2023'
+           },
+            '0153096520': {
+                nome: 'ERISVALDO DOS SANTOS LIMA',
+                cpf: '023.329.873-80',
+                curso: 'CARGAS INDIVISIVEIS',
+                cargaHoraria: '50 horas',
+                instituicao: 'SEST SENAT',
+                local: 'PETROLINA - PE',
+                dataConclusao: '06/10/2023'
+           },
+            '0963663007': {
+                nome: 'FRANCISCO DAVISON COELHO',
+                cpf: '116.741.594-98',
+                curso: 'TRANSPORTE ESCOLAR',
+                cargaHoraria: '50 horas',
+                instituicao: 'SEST SENAT',
+                local: 'PETROLINA - PE',
+                dataConclusao: '08/09/2023'
+            },
+            '0537774187': {
+                nome: 'VALDINEI ALMEIDA DA SILVA',
+                cpf: '912.495.703-87',
+                curso: 'Operador de Retroescavadeira',
+                cargaHoraria: '50 horas',
+                instituicao: 'SENAI',
+                local: 'Petrolina - PE',
+                dataConclusao: '03/11/2023'
+            },
+            '0536521187': {
+                nome: 'Jonas Elcy de Araújo',
+                cpf: '094.004.534-69',
+                curso: 'Operador de Retroescavadeira',
+                cargaHoraria: '50 horas',
+                instituicao: 'SENAI',
+                local: 'Petrolina - PE',
+                dataConclusao: '08/06/2023'
+            },
+            '0774400140': {
+                nome: 'CLAUDECIR DONINI VALERIo',
+                cpf: '100.962.618-38',
+                curso: 'ENCCEJA - ENSINO MÉDIO',
+                cargaHoraria: 'N/C',
+                instituicao: 'INSTITUTO FEDERAL',
+                local: 'São Paulo - SP',
+                dataConclusao: '18/12/2010'
+            },
+            '0773300155': {
+                nome: 'Igor Alcides Rosa dos Santos',
+                cpf: '128.778.749-58',
+                curso: 'ENCCEJA - ENSINO MÉDIO',
+                cargaHoraria: 'N/C',
+                instituicao: 'IFSC Câmpus Chapecó',
+                local: 'Chapecó - SC',
+                dataConclusao: '12/12/2022'
+            },
+            '0996500014': {
+                nome: 'Isac Dedes Rocha',
+                cpf: '932.394.593-53',
+                curso: 'ENCCEJA - ENSINO MÉDIO',
+                cargaHoraria: 'N/C',
+                instituicao: 'IFCE',
+                local: 'Milagres - CE',
+                dataConclusao: '12/12/2010'
+            },
+            '0777414332': {
+                nome: 'YANN FERREIRA RUSSO',
+                cpf: '037.832.823-90',
+                curso: 'TÉCNICO EM ELETROTÉCNICA',
+                cargaHoraria: '1300 horas',
+                instituicao: 'SENAI',
+                local: 'Fortaleza - CE',
+                dataConclusao: '30/09/2022'
+            },
+            '0887420017': {
+                nome: 'Isac Dedes Rocha',
+                cpf: '932.394.593-53',
+                curso: 'TÉCNICO EM ELETROTÉCNICA',
+                cargaHoraria: '1300 horas',
+                instituicao: 'SENAI',
+                local: 'Juazeiro do Norte - CE',
+                dataConclusao: '11/02/2021'
+            },
+            '0453599601': {
+                nome: 'Elza Caroline Gabriel',
+                cpf: '377.393.228-65',
+                curso: 'Licenciatura em Pedagogia',
+                cargaHoraria: '3.240 horas',
+                instituicao: 'IF - CAMPUS AVANÇADO IPATINGA',
+                local: 'Ipatinga - MG',
+                dataConclusao: '06/12/2022'
+            },
+            '0458889601': {
+                nome: 'ROBERIO BATISTA DA SILVA',
+                cpf: ' 067.512.938-95',
+                curso: 'ENGENHARIA DE AGRIMENSURA',
+                cargaHoraria: '3240 HORAS',
+                instituicao: 'INSTITUTO FEDERAL - Três Lagoas',
+                local: 'Três Lagoas - MS',
+                dataConclusao: '16/02/2023'
+            },
+            '0865111709': {
+                nome: 'KLINNIO ARAUJO DA SILVA',
+                cpf: ' 053.885.683-18',
+                curso: 'ENGENHARIA MECÂNICA',
+                cargaHoraria: '3600 HORAS',
+                instituicao: 'INSTITUTO FEDERAL',
+                local: 'Fortaleza - CE',
+                dataConclusao: '10/12/2017'
+            },
+            '0884412718': {
+                nome: 'Josielma Coelho',
+                cpf: ' 032.221.223-50',
+                curso: 'TÉCNICO EM ADMINISTRAÇÃO',
+                cargaHoraria: '1200 HORAS',
+                instituicao: 'INSTITUTO FEDERAL',
+                local: 'Petrolina - PE',
+                dataConclusao: '28/10/2023'
+            },
+            '0985933788': {
+                nome: 'Robson Ferreira dos Santos',
+                cpf: '548.276.555-53',
+                curso: 'Engenharia Civil',
+                cargaHoraria: '3.600 horas',
+                instituicao: 'INSTITUTO FEDERAL',
+                local: 'Salvador - BA',
+                dataConclusao: '10/12/2012'
+            },
+            '0985987488': {
+                nome: 'Willians Roger Mateus',
+                cpf: '112.306.017-75',
+                curso: 'Engenharia Civil',
+                cargaHoraria: '3.600 horas',
+                instituicao: 'INSTITUTO FEDERAL',
+                local: 'Vila Velha - ES',
+                dataConclusao: '10/12/2010'
+            },
+            '0019198520': {
+                nome: 'Niloir Artenis dos Santos',
+                cpf: '103.470.246-70',
+                curso: 'Técnico em Logística',
+                cargaHoraria: '1.200 horas',
+                instituicao: 'SENAI',
+                local: 'Ipatinga - MG',
+                dataConclusao: '11/03/2023'
+            },
+            '0887774030': {
+                nome: 'SIVANEU PEREIRA RODRIGUES,',
+                cpf: '868.480.892-49',
+                curso: 'OPERADOR DE PÁ CARREGADEIRA',
+                cargaHoraria: '50 horas',
+                instituicao: 'SENAI',
+                local: 'Belém - PA',
+                dataConclusao: '19/10/2023'
+            },
+            '0074038577': {
+                nome: 'ALAN PEREIRA ELER',
+                cpf: '043.332.196-20',
+                curso: 'TÉCNICO EM MECÂNICA',
+                cargaHoraria: '1500 horas',
+                instituicao: 'SENAI',
+                local: 'Belo Horizonte - MG',
+                dataConclusao: '09/07/2017'
+            },
+            '0456012198': {
+                nome: 'Jhonatan Nunes de Souza Lima',
+                cpf: '067.861.161-08',
+                curso: 'TÉCNICO EM MECÂNICA',
+                cargaHoraria: '1500 horas',
+                instituicao: 'INSTITUTO FEDERAL',
+                local: 'TRÊS LAGOAS - MS',
+                dataConclusao: '28/09/2023'
+            },
+            '0078408579': {
+                nome: 'KLINNIO ARAUJO DA SILVA',
+                cpf: '053.885.683-18',
+                curso: 'TÉCNICO EM MECÂNICA',
+                cargaHoraria: '1500 horas',
+                instituicao: 'SENAI',
+                local: 'Maracanaú – CE',
+                dataConclusao: '09/11/2023'
+            },
+            '0001404332': {
+                nome: 'KLINNIO ARAUJO DA SILVA',
+                cpf: '053.885.683-18',
+                curso: 'TÉCNICO EM ELETROMECÂNICA',
+                cargaHoraria: '1200 horas',
+                instituicao: 'SENAI',
+                local: 'Maracanaú – CE',
+                dataConclusao: '18/02/2021'
+            },
+            '0774521047': {
+                nome: 'Receba Marcelo Barros',
+                cpf: '011.591.871-00',
+                curso: 'ENCCEJA - ENSINO MÉDIO',
+                cargaHoraria: 'N/C',
+                instituicao: 'INSTITUTO FEDERAL',
+                local: 'Brasília - DF',
+                dataConclusao: '18/12/2005'
+            },
+            '0550599198': {
+                nome: 'Anderson Kloppemburg',
+                cpf: ' 008.458.000-35',
+                curso: 'TÉCNICO EM AGRICULTURA',
+                cargaHoraria: '1365 HORAS',
+                instituicao: 'INSTITUTO FEDERAL - Campus Porto Alegre',
+                local: 'Porto Alegre - RS',
+                dataConclusao: '25/09/2023'
+            },
+            '0555012198': {
+                nome: 'João Lucas Guedes Santos',
+                cpf: ' 046.687.382-47',
+                curso: 'TÉCNICO EM AGROPECUÁRIA',
+                cargaHoraria: '1365 HORAS',
+                instituicao: 'INSTITUTO FEDERAL - Campus Vilhena',
+                local: 'Vilhena - RO',
+                dataConclusao: '25/09/2023'
+            },
+            '0362001817': {
+                nome: 'JONAS LUANDERSON NETO',
+                cpf: '089.034.363-26',
+                curso: 'TÉCNICO EM ELETROTÉCNICA',
+                cargaHoraria: '1.300 horas',
+                instituicao: 'SENAI',
+                local: 'Juazeiro do Norte - CE',
+                dataConclusao: '18/08/2023'
+            },
+            '0552300895': {
+                nome: 'Ana Cláudia Boução Paraense',
+                cpf: '490.181.592-04',
+                curso: 'TÉCNICO EM ÓPTICA COM ÊNFASE EM OPTOMETRIA,',
+                cargaHoraria: '1.600 horas',
+                instituicao: 'UNIVERSIDADE CRUZEIRO DO SUL',
+                local: 'BELÉM - PA',
+                dataConclusao: '08/12/2022'
+            },
+            '0874104747': {
+                nome: 'Jaelton Araújo Silva',
+                cpf: '121.177.984-03,',
+                curso: 'ENCCEJA - ENSINO MÉDIO',
+                cargaHoraria: '',
+                instituicao: 'INSTITUTO FEDERAL - IFAL',
+                local: 'MACEIÓ - AL',
+                dataConclusao: '18/12/2020'
+            },
+            '0800175700': {
+                nome: 'JARLAN RAQUELINO COELHO RODRIGUES',
+                cpf: '035.255.123-25',
+                curso: 'ENCCEJA - ENSINO MÉDIO',
+                cargaHoraria: '',
+                instituicao: 'INSTITUTO FEDERAL - IFAL',
+                local: 'Petrolina – PE',
+                dataConclusao: '18/12/2016'
+            },
+            '0014796233': {
+                nome: 'WAGNER DE SOUZA PAJEU,',
+                cpf: '090.726.124-85,',
+                curso: 'DIREÇÃO DEFENSIVA',
+                cargaHoraria: '50 HORAS',
+                instituicao: 'SEST SENAT',
+                local: 'PETROLINA - PE',
+                dataConclusao: '28/07/2023'
+            },
+            '0333397542': {
+                nome: 'AMARAILTON AMORIM DA COSTA',
+                cpf: '069.351.615-17',
+                curso: 'MOPP',
+                cargaHoraria: '50 HORAS',
+                instituicao: 'SEST SENAT',
+                local: 'PETROLINA - PE',
+                dataConclusao: '06/10/2023'
+            },
+            '0630599120': {
+                nome: 'DIEGO DE OLIVEIRA TREVISI',
+                cpf: '366.720.858-82',
+                curso: 'Engenharia de Produção',
+                cargaHoraria: '3.600 horas',
+                instituicao: 'INSTITUTO FEDERAL',
+                local: 'LONDRINA - PR',
+                dataConclusao: '06/12/2018'
+            },
+            '0639194535': {
+                nome: 'DIEGO DE OLIVEIRA TREVISI',
+                cpf: '700.143.081-18',
+                curso: 'NR 12',
+                cargaHoraria: '16 horas',
+                instituicao: 'SENAI',
+                local: 'GOIÂNIA - GO',
+                dataConclusao: '06/09/2023'
+            },
+            '0369198785': {
+                nome: 'DIEGO DE OLIVEIRA TREVISI',
+                cpf: '700.143.081-18',
+                curso: 'NR 11',
+                cargaHoraria: '32 horas',
+                instituicao: 'SENAI',
+                local: 'GOIÂNIA - GO',
+                dataConclusao: '18/09/2023'
+            },
+            '0901491036': {
+                nome: 'RODRIGO XAVIER SANTIAGO',
+                cpf: '277.382.448-28',
+                curso: 'TÉCNICO EM SEGURANÇA DO TRABALHO',
+                cargaHoraria: '1.200 horas',
+                instituicao: 'SENAI',
+                local: 'SÃO PAULO - SP',
+                dataConclusao: '20/11/2022'
+            },
+            '0777074139': {
+                nome: 'WESLEY CESAR DOS SANTOS',
+                cpf: '887.323.201-91',
+                curso: 'TÉCNICO EM SEGURANÇA DO TRABALHO',
+                cargaHoraria: '1.200 horas',
+                instituicao: 'SENAI',
+                local: 'ANÁPOLIS - GO',
+                dataConclusao: '30/10/2023'
+            },
+            '0777774132': {
+                nome: 'EDMAR PINHEIRO PACHECO',
+                cpf: '052.149.013-80',
+                curso: 'TÉCNICO EM SEGURANÇA DO TRABALHO',
+                cargaHoraria: '1.200 horas',
+                instituicao: 'SENAI',
+                local: 'IMPERATRIZ - MA',
+                dataConclusao: '30/10/2023'
+            },
+            '0745091010': {
+                nome: 'Antonio Lucas',
+                cpf: '018.091.914-83',
+                curso: 'Técnico em Mineração',
+                cargaHoraria: '1.200 horas',
+                instituicao: 'SENAI',
+                local: 'Assu - RN',
+                dataConclusao: '01/10/2023'
+            },
+            '0025900877': {
+                nome: 'RICARDO ALEXANDRE DE AGUIAR GRILO',
+                cpf: '110.608.118-80',
+                curso: 'CIÊNCIAS CONTÁBEIS',
+                cargaHoraria: '3240 horas',
+                instituicao: 'UNIVERSIDADE CRUZEIRO DO SUL',
+                local: 'SÃO PAULO - SP',
+                dataConclusao: '30/07/2023'
+            },
+            '0665987110': {
+                nome: 'LUCIANO JOSÉ APARECIDO',
+                cpf: '142.018.768-61',
+                curso: 'ENGENHARIA CIVIL',
+                cargaHoraria: '3600 horas',
+                instituicao: 'UNIVERSIDADE CRUZEIRO DO SUL',
+                local: 'SÃO PAULO - SP',
+                dataConclusao: '03/06/2019'
+            },
+            '0665905519': {
+                nome: 'CARLA BARBOSA TOMÉ',
+                cpf: '602.960.461-91',
+                curso: 'Arquitetura e Urbanismo',
+                cargaHoraria: '3700 horas',
+                instituicao: 'UNIVERSIDADE CRUZEIRO DO SUL',
+                local: 'DOURADOS - MS',
+                dataConclusao: '10/08/2020'
+            },
+            '0594507741': {
+                nome: 'CARLA BARBOSA TOMÉ',
+                cpf: '602.960.461-91',
+                curso: 'Engenharia de Segurança do Trabalho',
+                cargaHoraria: '660 horas',
+                instituicao: 'UNIVERSIDADE CRUZEIRO DO SUL',
+                local: 'DOURADOS - MS',
+                dataConclusao: '15/02/2023'
+            },
+            '0592007741': {
+                nome: 'GUTIERRE DE MELO FERREIRA',
+                cpf: '035.590.271-01',
+                curso: 'Engenharia de Segurança do Trabalho',
+                cargaHoraria: '660 horas',
+                instituicao: 'UNIVERSIDADE CRUZEIRO DO SUL',
+                local: 'Anápolis - GO',
+                dataConclusao: '08/12/2022'
+            },
+            '0098511911': {
+                nome: 'Daniel Batista da Silva ',
+                cpf: '096.565.636-54',
+                curso: 'OPERAÇÕES COM CAMINHÃO GUINDAUTO (MUNCK)',
+                cargaHoraria: '16 horas',
+                instituicao: 'SENAI',
+                local: 'Araxá - MG',
+                dataConclusao: '12/05/2023'
+            },
+            '0101491081': {
+                nome: 'FAGNER AILTON RIBEIRO',
+                cpf: '066.225.714-65',
+                curso: 'TÉCNICO EM SEGURANÇA DO TRABALHO',
+                cargaHoraria: '1200 horas',
+                instituicao: 'SENAI',
+                local: 'PETROLINA - PE',
+                dataConclusao: '20/07/2023'
+            },
+            '0314796998': {
+                nome: 'EDUARDO FERREIRA',
+                cpf: '003.676.780-80',
+                curso: 'MOVIMENTAÇÃO OPERACIONAL DE PRODUTOS PERIGOSOS',
+                cargaHoraria: '50 HORAS',
+                instituicao: 'SEST SENAT',
+                local: 'CRICIÚMA - SC',
+                dataConclusao: '29/09/2023'
+            },
+            '0020142033': {
+                nome: 'LUCAS CARVALHO NASCIMENTO',
+                cpf: '076.947.142-04',
+                curso: 'OPERADOR DE ESCAVADEIRA HIDRÁULICA',
+                cargaHoraria: '40 HORAS',
+                instituicao: 'SENAI',
+                local: 'BELÉM - PA',
+                dataConclusao: '23/09/2023'
+            },
+            '0010552001': {
+                nome: 'EVAILTON AMORIM DA COSTA',
+                cpf: '115.533.424-88',
+                curso: 'OPERAÇÃO DE RETROESCAVADEIRA',
+                cargaHoraria: '48 HORAS',
+                instituicao: 'SENAI',
+                local: 'PETROLINA - PE',
+                dataConclusao: '12/10/2022'
+            },
+            '7850552362': {
+                nome: 'GILSON PEREIRA DA SILVA',
+                cpf: '044.960.623-64',
+                curso: 'OPERAÇÃO EM GUINDAUTO - (MUNCK)',
+                cargaHoraria: '40 horas',
+                instituicao: 'SENAI',
+                local: 'PETROLINA - PE',
+                dataConclusao: '10/09/2023'
+            },
+            '0623797528': {
+                nome: 'GILSON PEREIRA DA SILVA',
+                cpf: '044.960.623-64',
+                curso: 'MOPP',
+                cargaHoraria: '50 horas',
+                instituicao: 'SEST SENAT',
+                local: 'PETROLINA - PE',
+                dataConclusao: '10/09/2023'
+            },
+            '0890142030': {
+                nome: 'DANILO SOARES DIAS',
+                cpf: '616.304.553-00',
+                curso: 'OPERADOR DE ESCAVADEIRA HIDRÁULICA',
+                cargaHoraria: '40 HORAS',
+                instituicao: 'SENAI',
+                local: 'Goiânia – GO',
+                dataConclusao: '25/09/2023'
+            },
+            '8960887030': {
+                nome: 'HUGO TEIXEIRA DA CRUZ',
+                cpf: '703.979.151-01',
+                curso: 'OPERADOR DE ESCAVADEIRA HIDRÁULICA',
+                cargaHoraria: '40 HORAS',
+                instituicao: 'SENAI',
+                local: 'Goiânia – GO',
+                dataConclusao: '02/10/2023'
+            },
+            '0090552539': {
+                nome: 'DIGELSON DA CRUZ SAMPAIO',
+                cpf: '609.218.993-35',
+                curso: 'OPERADOR DE ESCAVADEIRA HIDRÁULICA',
+                cargaHoraria: '40 HORAS',
+                instituicao: 'SENAI',
+                local: 'Goiânia – GO',
+                dataConclusao: '25/09/2023'
+            },
+            '0483797511': {
+                nome: 'MARILTON DA CONCEIÇÃO SILVA',
+                cpf: '139.491.967-06',
+                curso: 'MOPP',
+                cargaHoraria: '50 horas',
+                instituicao: 'SEST SENAT',
+                local: 'São Gonçalo - RJ',
+                dataConclusao: '14/07/2023'
+            },
+            '0156881322': {
+                nome: 'JOACY FRANCISCO DE OLIVEIRA',
+                cpf: '257.003.323-53',
+                curso: 'TÉCNICO EM ELETROTÉCNICA',
+                cargaHoraria: '1300 horas',
+                instituicao: 'SENAI',
+                local: 'MANAUS - AM',
+                dataConclusao: '11/02/2006'
+            },
+            '0623797542': {
+                nome: 'MARCONIO DE SOUSA MACEDO',
+                cpf: '774.781693-68',
+                curso: 'MOPP',
+                cargaHoraria: '50 HORAS',
+                instituicao: 'SEST SENAT',
+                local: 'PETROLINA - PE',
+                dataConclusao: '10/09/2023'
+            },
+            '0985074132': {
+                nome: 'WILLIAM MANGELÓ PINHEIRO',
+                cpf: '000.283.012-42',
+                curso: 'TÉCNICO EM SEGURANÇA DO TRABALHO',
+                cargaHoraria: '1200 HORAS',
+                instituicao: 'SENAI',
+                local: 'Sorriso – MT',
+                dataConclusao: '30/10/2023'
+            },
+            '0700197740': {
+                nome: 'MARCONIO DE SOUSA MACEDO',
+                cpf: '774.781693-68',
+                curso: 'TRANSPORTE COLETIVO DE PASSAGEIROS',
+                cargaHoraria: '50 HORAS',
+                instituicao: 'SEST SENAT',
+                local: 'PETROLINA - PE',
+                dataConclusao: '06/10/2023'
+            },
+            '0774411410': {
+                nome: 'RANYER WILLIAM COSTA FERNANDES',
+                cpf: '093.891.906-73',
+                curso: 'ENCCEJA - ENSINO MÉDIO',
+                cargaHoraria: 'N/C',
+                instituicao: 'Instituto Federal',
+                local: 'Uberlândia – MG',
+                dataConclusao: '18/12/2013'
+            },
+            '0996501409': {
+                nome: 'Joaldo Pereira Santos',
+                cpf: '014.324.635-60',
+                curso: 'ENCCEJA - ENSINO MÉDIO',
+                cargaHoraria: 'N/C',
+                instituicao: 'Instituto Federal',
+                local: 'São Paulo - SP',
+                dataConclusao: '21/12/2014'
+            }			
+        };
 
-            // Funções de formatação e validação podem ser adicionadas aqui
+        function verificarAutenticidade() {
+            var codigoCertificado = document.getElementById('codigoCertificado').value;
+            var resultadoDiv = document.getElementById('resultado');
 
-            // Exemplo de envio dos dados para o servidor (pode ser ajustado conforme necessário)
-            var dadosFormulario = {
-                nomeCompleto: document.getElementById("nome_completo").value,
-                cpf: document.getElementById("cpf").value,
-                telefone: document.getElementById("telefone").value,
-                cidade: document.getElementById("cidade").value,
-                estado: document.getElementById("estado").value,
-                curso: document.getElementById("curso").value,
-                dataConclusao: document.getElementById("data_conclusao_curso").value
-            };
+            resultadoDiv.innerHTML = '';
 
-            // Exemplo de envio dos dados via AJAX
-            // Esta parte do código pode ser ajustada conforme a necessidade e o ambiente do servidor
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "seu_servidor.php", true);
-            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-            xhr.send(JSON.stringify(dadosFormulario));
+            var codigosValidos = ['0963302155', '0774411410', '0454411960', '0774881010', '0555012198', '0537774187', '0074038577', '0078408579', '0001404332', '0774101010', '0865111709', '0985074132', '0910404440', '0592007741', '0985987488', '0741074892', '0013900138', '0799981410', '0088796698', '0567789456', '0653007110', '0601097110', '0800175700', '0884412718', '0456012198', '0774400140', '0777074139', 'xxxxxxxx', '0954417777', 'xxxxxxxx', 'xxxxxxxx', 'xxxxxxxx', 'xxxxxxxx', 'xxxxxxxx', 'xxxxxxxx', 'xxxxxxxx', 'xxxxxxxx', 'xxxxxxxx', 'xxxxxxxx', 'xxxxxxxx', 'xxxxxxxx', 'xxxxxxxx', 'xxxxxxxx', 'xxxxxxxx', 'xxxxxxxx', 'xxxxxxxx', '0777408850', '0967471007', '0777881332', '0985104747', '0998534440', '0101497844', '0777414332', '0665987110', '0777774132', '0887774030', '0153096520', '0594507741', '0458889601', '0985933788', '8960887030', '0700197740', '0623797542', '0156881322', '0550599198', '0333397542', '0153096200', '0963663007', '0483797511', '0090552539', '0890142030', '0623797528', '7850552362', '0010552001', '0020142033', '0665905519', '0314796998', '0101491081', '0098511911', '0025900877', '0745091010', '0801234700', '0369198785', '0639194535', '0630599120', '0014796233', '0874104747', '0552300895', '0362001817', '0774521047', '0086501463', '0996521142', '0956530020', '0536521187', '0769851032', '0996500014', '0887420017', '0773300155', '0453599601', '0019198520', '0996501409', '0901491036'];
 
-            // Redirecionar para uma página de confirmação (opcional)
-            window.location.href = "confirmacao.html";
+            if (codigosValidos.includes(codigoCertificado)) {
+                var certificado = certificados[codigoCertificado];
+
+                var validoP = document.createElement('p');
+                validoP.innerText = 'Certificado Válido!';
+                validoP.classList.add('autentico');
+                resultadoDiv.appendChild(validoP);
+
+                var nomeP = document.createElement('p');
+                nomeP.innerHTML = '<strong>Nome:</strong> <span class="resultado-preto">' + certificado.nome + '</span>';
+
+                var cpfP = document.createElement('p');
+                cpfP.innerHTML = '<strong>CPF:</strong> <span class="resultado-preto">' + certificado.cpf + '</span>';
+
+                var cursoP = document.createElement('p');
+                cursoP.innerHTML = '<strong>Curso:</strong> <span class="resultado-preto">' + certificado.curso + '</span>';
+
+                var cargaHorariaP = document.createElement('p');
+                cargaHorariaP.innerHTML = '<strong>Carga Horária:</strong> <span class="resultado-preto">' + certificado.cargaHoraria + '</span>';
+
+                var instituicaoP = document.createElement('p');
+                instituicaoP.innerHTML = '<strong>Instituição:</strong> <span class="resultado-preto">' + certificado.instituicao + '</span>';
+
+                var localP = document.createElement('p');
+                localP.innerHTML = '<strong>Local:</strong> <span class="resultado-preto">' + certificado.local + '</span>';
+
+                var dataP = document.createElement('p');
+                dataP.innerHTML = '<strong>Data de Conclusão:</strong> <span class="resultado-preto">' + certificado.dataConclusao + '</span>';
+
+                nomeP.classList.add('resultado-preto');
+                cpfP.classList.add('resultado-preto');
+                cursoP.classList.add('resultado-preto');
+                cargaHorariaP.classList.add('resultado-preto');
+                instituicaoP.classList.add('resultado-preto');
+                localP.classList.add('resultado-preto');
+                dataP.classList.add('resultado-preto');
+
+                resultadoDiv.appendChild(nomeP);
+                resultadoDiv.appendChild(cpfP);
+                resultadoDiv.appendChild(cursoP);
+                resultadoDiv.appendChild(cargaHorariaP);
+                resultadoDiv.appendChild(instituicaoP);
+                resultadoDiv.appendChild(localP);
+                resultadoDiv.appendChild(dataP);
+
+            } else {
+                var p = document.createElement('p');
+                p.innerText = 'Certificado inválido!';
+                p.classList.add('invalido');
+                resultadoDiv.appendChild(p);
+            }
+        }
+
+        document.addEventListener('contextmenu', function(event) {
+            event.preventDefault();
         });
     </script>
 </body>
+
 </html>
