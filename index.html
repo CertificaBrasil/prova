@@ -1,110 +1,148 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ficha de Inscrição</title>
+    <title>Prova do </title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
-            text-align: center;
             margin: 0;
             padding: 0;
         }
+        header {
+            background-color: #0077b6;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+        }
+        h1 {
+            font-size: 24px;
+        }
         .container {
-            max-width: 300px;
+            max-width: 800px;
             margin: 0 auto;
             padding: 20px;
             background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #333;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         }
         label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input[type="text"],
-        input[type="tel"] {
-            width: 80%;
-            padding: 8px;
             margin-bottom: 10px;
+        }
+        label input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            required: true;
-            text-align: center;
+            height: 150px;
+        }
+        /* Estilo adicionado para alinhar o label à esquerda */
+        .left-align-label {
+            text-align: left;
+        }
+        h2 {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+        label input[type="radio"] {
+            margin-right: 10px;
         }
         input[type="submit"] {
-            background-color: #007bff;
+            background-color: #0077b6;
             color: #fff;
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 16px;
         }
         input[type="submit"]:hover {
-            background-color: #0056b3;
+            background-color: #00588f;
+        }
+        .center-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
         }
     </style>
 </head>
 <body>
+    <header>
+        <h1>Prova de 5 Questões - </h1>
+    </header>
     <div class="container">
-        <h1>Ficha de Inscrição</h1>
-        <form action="processar.php" method="POST">
-            <label for="nome_completo">Nome Completo:</label>
-            <input type="text" id="nome_completo" name="nome_completo" required>
+        <form action="processar_respostas.php" method="POST">
+            <div class="center-container">
+                <!-- Estilo adicionado ao label para alinhá-lo à esquerda -->
+                <label for="nome" class="left-align-label" style="font-weight: bold;">NOME DO ALUNO(A):</label>
+                <input type="text" id="nome" name="nome" required rows="5" style="width: 200px; resize: vertical;">
+            </div>
 
-            <label for="cpf">CPF:</label>
-            <input type="text" id="cpf" name="cpf" required placeholder="000.000.000-00">
+            <h2>Questão 1: </h2>
+            <label>
+                <input type="radio" name="resposta1" value="a"> A) 
+            </label>
+            <label>
+                <input type="radio" name="resposta1" value="b"> B) 
+            </label>
+            <label>
+                <input type="radio" name="resposta1" value="c"> C) 
+            </label>
 
-            <label for="telefone">Telefone:</label>
-            <input type="tel" id="telefone" name="telefone" required placeholder="(00) 00000-0000">
+            <h2>Questão 2: </h2>
+            <label>
+                <input type="radio" name="resposta2" value="a"> A) 
+            </label>
+            <label>
+                <input type="radio" name="resposta2" value="b"> B) 
+            </label>
+            <label>
+                <input type="radio" name="resposta2" value="c"> C) 
+            </label>
 
-            <label for="cidade">Cidade:</label>
-            <input type="text" id="cidade" name="cidade" required>
+            <!-- Pergunta 3 -->
+            <h2>Questão 3: </h2>
+            <label>
+                <input type="radio" name="resposta3" value="a"> A) 
+            </label>
+            <label>
+                <input type="radio" name="resposta3" value="b"> B) 
+            </label>
+            <label>
+                <input type="radio" name="resposta3" value="c"> C) 
+            </label>
 
-            <label for="estado">Estado:</label>
-            <input type="text" id="estado" name="estado" required>
+            <!-- Pergunta 4 -->
+            <h2>Questão 4: </h2>
+            <label>
+                <input type="radio" name="resposta4" value="a"> A) 
+            </label>
+            <label>
+                <input type="radio" name="resposta4" value="b"> B) 
+            </label>
+            <label>
+                <input type="radio" name="resposta4" value="c"> C) 
+            </label>
 
-            <label for="curso">Curso:</label>
-            <input type="text" id="curso" name="curso" required>
+            <!-- Pergunta 5 -->
+            <h2>Questão 5: </h2>
+            <label>
+                <input type="radio" name="resposta5" value="a"> A) 
+            </label>
+            <label>
+                <input type="radio" name="resposta5" value="b"> B) 
+            </label>
+            <label>
+                <input type="radio" name="resposta5" value="c"> C) 
+            </label>
 
-            <label for="data_conclusao_curso">Data de Conclusão do Curso:</label>
-            <input type="text" id="data_conclusao_curso" name="data_conclusao_curso" required placeholder="DD/MM/AAAA">
-
-            <input type="submit" value="Enviar">
+            <input type="submit" value="Enviar Respostas">
         </form>
     </div>
-
-    <script>
-        // Máscara para o campo de CPF (000.000.000-00)
-        var cpfInput = document.getElementById("cpf");
-        cpfInput.addEventListener("input", function () {
-            var valor = this.value.replace(/\D/g, "");
-            var formatado = valor.substring(0, 3) + "." + valor.substring(3, 6) + "." + valor.substring(6, 9) + "-" + valor.substring(9, 11);
-            this.value = formatado;
-        });
-
-        // Máscara para o campo de telefone (00) 00000-0000
-        var telefoneInput = document.getElementById("telefone");
-        telefoneInput.addEventListener("input", function () {
-            var valor = this.value.replace(/\D/g, "");
-            var formatado = "(" + valor.substring(0, 2) + ") " + valor.substring(2, 7) + "-" + valor.substring(7, 11);
-            this.value = formatado;
-        });
-
-        // Máscara para o campo de data de conclusão do curso (DD/MM/AAAA)
-        var dataConclusaoInput = document.getElementById("data_conclusao_curso");
-        dataConclusaoInput.addEventListener("input", function () {
-            var valor = this.value.replace(/\D/g, "");
-            if (valor.length > 2) {
-                var formatado = valor.substring(0, 2) + "/" + valor.substring(2, 4) + "/" + valor.substring(4, 8);
-                this.value = formatado;
-            }
-        });
-    </script>
 </body>
 </html>
